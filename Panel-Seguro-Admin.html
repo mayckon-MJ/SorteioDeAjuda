@@ -1,0 +1,833 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal de Controle - Segurança Avançada</title>
+    <style>
+        :root {
+            --bg-principal: #030712; /* Fundo Deep Cyber Dark */
+            --bg-card: rgba(15, 23, 42, 0.75); /* Vidro Escuro */
+            --texto-principal: #f8fafc;
+            --texto-secundario: #94a3b8;
+            --cor-accent: #3b82f6;
+            --cor-accent-glow: rgba(59, 130, 246, 0.4);
+            --border-color: rgba(51, 65, 85, 0.6);
+            --sucesso: #10b981;
+            --sucesso-glow: rgba(16, 185, 129, 0.2);
+            --erro: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-principal);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efeito de Fundo Tecnológico Sutil */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--cor-accent-glow);
+            filter: blur(120px);
+            top: 10%;
+            left: 15%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(16, 185, 129, 0.15);
+            filter: blur(100px);
+            bottom: 10%;
+            right: 15%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Canvas para a chuva de códigos caindo do travamento */
+        #lockout-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: none;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        /* Estrutura Centralizada */
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* Topbar com Aparência Intelectual/Militar */
+        .admin-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .admin-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .admin-header .subtitle {
+            font-size: 13px;
+            color: var(--texto-secundario);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* Cartão Avançado com Glassmorphism Realista */
+        .admin-box {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            padding: 40px 32px;
+            width: 100%;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--texto-secundario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 50px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 16px;
+            color: var(--texto-principal);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--cor-accent);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .input-wrapper input {
+            padding-right: 46px;
+        }
+
+        /* Botão Ocultar/Exibir Senha */
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--texto-secundario);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--texto-principal);
+        }
+
+        /* Botão de Envio High-Tech */
+        .btn-submit {
+            height: 50px;
+            background: linear-gradient(135deg, var(--cor-accent), #1d4ed8);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px var(--cor-accent-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Botão de Suporte/Contato com a Administração de Segurança */
+        .btn-suporte-seguranca {
+            display: none; /* Inicia oculto e só aparece após o lockout */
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 48px;
+            background-color: rgba(239, 68, 68, 0.06);
+            color: #fca5a5;
+            text-decoration: none;
+            border: 1px dashed rgba(239, 68, 68, 0.4);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+            margin-top: -6px; /* Ajuste fino de proximidade com o botão azul */
+        }
+
+        .btn-suporte-seguranca:hover {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-color: var(--erro);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        }
+
+        /* Área de Destino do Botão Único */
+        .panel-area {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-status-indicator {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--sucesso);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--sucesso);
+            border-radius: 50%;
+            animation: pulseGlow 1.5s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.9); opacity: 0.4; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.9); opacity: 0.4; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* O Botão Único Formato <a> Premium */
+        .admin-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            color: var(--texto-principal);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid var(--sucesso);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-tag-internal {
+            font-size: 11px;
+            font-family: monospace;
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--sucesso);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-link-btn:hover {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #059669;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .admin-link-btn:hover .btn-tag-internal {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        /* Efeito Shimmer de Carregamento Inicial (Skeleton) */
+        .skeleton {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 200% 100%;
+            animation: loadingShimmer 1.5s infinite;
+            border-color: transparent !important;
+            pointer-events: none;
+            color: transparent !important;
+        }
+        .skeleton .btn-tag-internal { display: none; }
+
+        @keyframes loadingShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Terminal de Logs Estilo Hacker */
+        .terminal-logs {
+            background-color: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            text-align: left;
+            display: none;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        /* Linhas de Resposta do Sistema */
+        .status-msg {
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .msg-erro { 
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--erro); 
+        }
+        .msg-sucesso { 
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--sucesso); 
+        }
+
+        .lockout-text {
+            color: var(--erro);
+            font-weight: bold;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        /* ESTRUTURA DO MODAL DE SUPORTE */
+        .modal-suporte-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-suporte-overlay.ativo {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-suporte-content {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-suporte-overlay.ativo .modal-suporte-content {
+            transform: scale(1);
+        }
+
+        .modal-suporte-header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .modal-suporte-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .modal-suporte-header p {
+            font-size: 13px;
+            color: var(--texto-secundario);
+            margin-top: 6px;
+        }
+
+        .modal-suporte-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .btn-whatsapp-submit {
+            height: 50px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+            text-decoration: none;
+        }
+
+        .btn-whatsapp-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-modal-fechar {
+            background: none;
+            border: none;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: color 0.2s;
+        }
+
+        .btn-modal-fechar:hover {
+            color: var(--erro);
+        }
+
+        @media (max-width: 480px) {
+            .admin-box { padding: 32px 20px; }
+            .admin-header h1 { font-size: 22px; }
+            .admin-link-btn { font-size: 14px; padding: 0 16px; }
+            .modal-suporte-content { padding: 24px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="lockout-canvas"></canvas>
+
+    <div class="wrapper">
+        <div class="admin-header">
+            <h1 id="main-title">🛡️ <br>Secure Gateway</h1>
+            <p class="subtitle" id="main-subtitle">Controle de Diretórios Críticos</p>
+        </div>
+
+        <div class="admin-box" id="admin-box-card">
+            
+            <div id="terminal" class="terminal-logs"></div>
+
+            <form id="form-login" class="login-form" onsubmit="executarLogin(event)">
+                <div class="input-group">
+                    <label for="admin-id">Identificador Global (ID)</label>
+                    <input type="text" id="admin-id" placeholder="Ex: root_admin" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="admin-pass">Token de Acesso (Senha)</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="admin-pass" placeholder="••••••••••••" required>
+                        <button type="button" class="toggle-password" onclick="alternarVisibilidadeSenha()" title="Mostrar/Ocultar">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-entrar">Autenticar Sistema</button>
+                
+                <a href="#" id="btn-suporte" class="btn-suporte-seguranca" onclick="abrirModalSuporte(event)">
+                    🛠️ Contatar Administração da Segurança
+                </a>
+            </form>
+
+            <div id="panel-area" class="panel-area">
+                <div class="panel-status-indicator">
+                    <div class="pulse-dot"></div> Túnel seguro estabelecido com sucesso
+                </div>
+                <a href="#" id="btn-principal" class="admin-link-btn" target="_blank">
+                    <span id="btn-texto-conteudo">Carregando permissões de acesso...</span>
+                    <span class="btn-tag-internal">ENTRAR</span>
+                </a>
+            </div>
+
+            <div id="msg-box" class="status-msg"></div>
+        </div>
+    </div>
+
+    <div id="modal-suporte" class="modal-suporte-overlay">
+        <div class="modal-suporte-content">
+            <div class="modal-suporte-header">
+                <h2>Recuperação de Credenciais</h2>
+                <p>Forneça seus dados para liberação manual do administrador</p>
+            </div>
+            
+            <form class="modal-suporte-form" onsubmit="enviarParaWhatsApp(event)">
+                <div class="input-group">
+                    <label for="suporte-nome">Seu Nome Completo</label>
+                    <input type="text" id="suporte-nome" placeholder="Digite seu nome" required autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <label for="suporte-id">Qual era o possível ID?</label>
+                    <input type="text" id="suporte-id" placeholder="ID que você tentou usar" required autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <label for="suporte-senha">Qual era a possível Senha?</label>
+                    <input type="text" id="suporte-senha" placeholder="Senha que você tentou usar" required autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn-whatsapp-submit">
+                    💬 Enviar Dados via WhatsApp
+                </button>
+                
+                <button type="button" class="btn-modal-fechar" onclick="fecharModalSuporte()">
+                    Cancelar Operação
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const urlAppsScript = 'https://script.google.com/macros/s/AKfycbxGlK50wDevLu7_ms7FBdqWcW9GzIDeIA9jxZWW8oEY2Y7Hbb1LcEqWe044jKta3AVn/exec';
+        
+        let contadorErros = 0;
+        let matrixIntervalo = null;
+
+        /* Funções de controle do novo Modal */
+        function abrirModalSuporte(event) {
+            event.preventDefault();
+            document.getElementById('modal-suporte').classList.add('ativo');
+        }
+
+        function fecharModalSuporte() {
+            document.getElementById('modal-suporte').classList.remove('ativo');
+        }
+
+        function enviarParaWhatsApp(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('suporte-nome').value;
+            const possivelId = document.getElementById('suporte-id').value;
+            const possivelSenha = document.getElementById('suporte-senha').value;
+            
+            const numeroTelefone = "5562995679219"; 
+            
+            // Montagem do texto estruturado da mensagem automática
+            const mensagem = `Olá, estou tentando acessar o Terminal de Controle e necessito de liberação.\n\n` +
+                             `*Meus Dados:*\n` +
+                             `• Nome: ${nome}\n` +
+                             `• Possível ID: ${possivelId}\n` +
+                             `• Possível Senha: ${possivelSenha}`;
+            
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroTelefone}&text=${encodeURIComponent(mensagem)}`;
+            
+            window.open(urlWhatsApp, '_blank');
+            fecharModalSuporte();
+        }
+
+        function alternarVisibilidadeSenha() {
+            const campoSenha = document.getElementById('admin-pass');
+            const botaoOlho = document.querySelector('.toggle-password');
+            if (campoSenha.type === 'password') {
+                campoSenha.type = 'text';
+                botaoOlho.innerText = '🙈';
+            } else {
+                campoSenha.type = 'password';
+                botaoOlho.innerText = '👁️';
+            }
+        }
+
+        function escreverLog(texto) {
+            const terminal = document.getElementById('terminal');
+            terminal.style.display = 'block';
+            const timestamp = new Date().toLocaleTimeString();
+            terminal.innerHTML += `<div>[${timestamp}] ${texto}</div>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function iniciarChuvaCodigos() {
+            const canvas = document.getElementById('lockout-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const letras = "01010101FFD0A1E5C203BAF689".split("");
+            const fontSize = 14;
+            const colunas = canvas.width / fontSize;
+            const caimento = Array(Math.floor(colunas)).fill(1);
+
+            function desenharMatrix() {
+                ctx.fillStyle = "rgba(3, 7, 18, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = "#ef4444"; 
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < caimento.length; i++) {
+                    const texto = letras[Math.floor(Math.random() * letras.length)];
+                    ctx.fillText(texto, i * fontSize, caimento[i] * fontSize);
+
+                    if (caimento[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        caimento[i] = 0;
+                    }
+                    caimento[i]++;
+                }
+            }
+            matrixIntervalo = setInterval(desenharMatrix, 33);
+        }
+
+        function interromperChuvaCodigos() {
+            clearInterval(matrixIntervalo);
+            const canvas = document.getElementById('lockout-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'none';
+        }
+
+        function iniciarProtocoloBloqueio() {
+            const formLogin = document.getElementById('form-login');
+            const msgBox = document.getElementById('msg-box');
+            const terminal = document.getElementById('terminal');
+            const idInput = document.getElementById('admin-id');
+            const passInput = document.getElementById('admin-pass');
+            const btnEntrar = document.getElementById('btn-entrar');
+            const btnSuporte = document.getElementById('btn-suporte');
+
+            idInput.disabled = true;
+            passInput.disabled = true;
+            btnEntrar.disabled = true;
+            btnSuporte.style.display = "none"; // Garante que o suporte suma durante a chuva de códigos
+
+            iniciarChuvaCodigos();
+
+            let loopLogs = setInterval(() => {
+                escreverLog("dando erro tentando conectar...");
+            }, 180);
+
+            setTimeout(() => {
+                clearInterval(loopLogs);
+                terminal.style.display = 'none';
+
+                msgBox.className = "status-msg msg-erro lockout-text";
+                msgBox.innerHTML = "Você tentou três vezes a senha e errou.<br>Por favor, contate o usuário administrador.";
+                msgBox.style.display = "block";
+
+                setTimeout(() => {
+                    interromperChuvaCodigos();
+                    
+                    contadorErros = 0;
+                    idInput.value = "";
+                    passInput.value = "";
+                    idInput.disabled = false;
+                    passInput.disabled = false;
+                    btnEntrar.disabled = false;
+                    btnEntrar.innerText = "Autenticar Sistema";
+                    
+                    // Exibe o botão de contato abaixo do botão azul ao retornar para a tela de preenchimento
+                    btnSuporte.style.display = "flex";
+                    msgBox.style.display = "none";
+                }, 10000);
+
+            }, 4000);
+        }
+
+        async function executarLogin(event) {
+            event.preventDefault();
+            
+            const idInput = document.getElementById('admin-id').value;
+            const passInput = document.getElementById('admin-pass').value;
+            const msgBox = document.getElementById('msg-box');
+            const btnEntrar = document.getElementById('btn-entrar');
+            const terminal = document.getElementById('terminal');
+
+            msgBox.style.display = "none";
+            terminal.innerHTML = ""; 
+            btnEntrar.disabled = true;
+            btnEntrar.innerText = "Processando...";
+
+            escreverLog("Inicializando handshake com servidor Google...");
+            escreverLog("Criptografando payload de chaves assimétricas...");
+
+            try {
+                const urlCompleta = `${urlAppsScript}?id=${encodeURIComponent(idInput)}&senha=${encodeURIComponent(passInput)}`;
+                
+                const response = await fetch(urlCompleta);
+                if (!response.ok) throw new Error("Falha crítica: Resposta inválida do servidor de segurança.");
+
+                const dados = await response.json();
+
+                if (dados.autenticado === true) {
+                    escreverLog("Assinatura digital verificada com sucesso.");
+                    escreverLog("Descriptografando tokens de acesso remoto...");
+
+                    msgBox.className = "status-msg msg-sucesso";
+                    msgBox.innerText = "Acesso concedido. Abrindo sessão corporativa...";
+                    msgBox.style.display = "block";
+
+                    setTimeout(() => {
+                        document.getElementById('form-login').style.display = "none";
+                        document.getElementById('main-title').innerText = "🖥️ Control Center";
+                        document.getElementById('main-subtitle').innerText = "Ambiente Admin Criptografado Ativo";
+                        
+                        const panelArea = document.getElementById('panel-area');
+                        const btnPrincipal = document.getElementById('btn-principal');
+                        panelArea.style.display = "flex";
+                        btnPrincipal.classList.add('skeleton');
+
+                        setTimeout(() => {
+                            btnPrincipal.classList.remove('skeleton');
+                            
+                            if(dados.botoes && dados.botoes[0]) {
+                                btnPrincipal.href = dados.botoes[0].link;
+                                document.getElementById('btn-texto-conteudo').innerText = dados.botoes[0].nome;
+                            } else {
+                                btnPrincipal.href = "Editar-Site.html";
+                                document.getElementById('btn-texto-conteudo').innerText = "Abrir Editor de Infraestrutura";
+                            }
+                            
+                            terminal.style.display = 'none';
+                            msgBox.style.display = "none";
+                        }, 1200);
+
+                    }, 1200);
+
+                } else {
+                    throw new Error(dados.erro || "Combinação de credenciais inválida.");
+                }
+
+            } catch (error) {
+                contadorErros++;
+                
+                if (contadorErros >= 3) {
+                    iniciarProtocoloBloqueio();
+                } else {
+                    escreverLog(`ALERTA: Credencial incompatível. Tentativa ${contadorErros}/3.`);
+                    msgBox.className = "status-msg msg-erro";
+                    msgBox.innerText = `${error.message} (${contadorErros}/3)`;
+                    msgBox.style.display = "block";
+                    
+                    btnEntrar.disabled = false;
+                    btnEntrar.innerText = "Autenticar Sistema";
+                }
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('lockout-canvas');
+            if(canvas.style.display === 'block') {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>

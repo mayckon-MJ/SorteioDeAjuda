@@ -1,0 +1,1431 @@
+
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <title>Sorteio.Jf</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f7f5f0;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            border: 1px solid #e0dbd1;
+        }
+
+        /* Cabeçalho */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #d1a153;
+            padding-bottom: 20px;
+        }
+
+        .logo-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0d3b66;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #0d3b66;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: #d1a153;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* Seção de Prêmios */
+        .premios-container {
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .premio-card {
+            background: #faf8f5;
+            border: 1px solid #e6dfd3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .badge {
+            background: #cc0000;
+            color: #fff;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .premio-titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0d3b66;
+            margin-bottom: 5px;
+        }
+
+        .premio-detalhe {
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .premio-pix {
+            color: #008060;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Estilo para as imagens dos prêmios */
+        .premio-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #eee;
+            background: #fff;
+        }
+
+        /* Grade de Números */
+        .grid-container {
+            margin: 30px auto;
+            max-width: 600px;
+        }
+
+        .grid-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0d3b66;
+            margin-bottom: 15px;
+        }
+
+        .numeros-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .num-btn {
+            background: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            padding: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .num-btn:hover {
+            border-color: #0d3b66;
+            background: #f0f4f8;
+        }
+
+        .num-btn.selecionado {
+            background: #cc0000 !important;
+            border-color: #990000 !important;
+            color: #ffffff !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Estilo para números já vendidos vindos da planilha ou salvos no admin local */
+        .num-btn.vendido {
+            background: #cc0000 !important;
+            border-color: #990000 !important;
+            color: #ffffff !important;
+            opacity: 0.6;
+            cursor: not-allowed !important;
+            }
+
+        /* Estilo Modo Admin */
+        body.admin-mode .num-btn {
+            background: #e1ebf5 !important;
+            border-color: #a4c2e6 !important;
+            color: #0d3b66 !important;
+            opacity: 1 !important;
+            cursor: pointer !important;
+        }
+        
+        body.admin-mode .num-btn.tem-dados {
+            background: #b3d4f7 !important;
+            border-color: #0d3b66 !important;
+            position: relative;
+        }
+
+        /* Informações de valores e pix */
+        .info-rifa {
+            text-align: center;
+            margin: 30px 0;
+            background: #f0f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #0d3b66;
+        }
+
+        .info-rifa p {
+            margin: 5px 0;
+            font-size: 15px;
+        }
+
+        .valor-destaque {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d1a153;
+        }
+
+        .chave-pix {
+            font-weight: bold;
+            color: #0d3b66;
+            background: #e1ebf5;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Botão Próximo Passo */
+        .acao-container {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-proximo {
+            background: #0d3b66;
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-proximo:hover {
+            background: #092c4e;
+        }
+
+        .admin-botoes-grupo {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-admin {
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .btn-admin:hover {
+            background: #5a6268;
+        }
+
+        .btn-backup {
+            background: #d1a153;
+        }
+        .btn-backup:hover {
+            background: #b58941;
+        }
+
+        /* Modais */
+        .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 15px;
+}
+
+
+        .modal-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-title {
+            color: #0d3b66;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 10px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .numeros-escolhidos {
+            background: #faf8f5;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e6dfd3;
+            font-weight: bold;
+            color: #cc0000;
+            letter-spacing: 1px;
+            word-wrap: break-word;
+        }
+
+        .valor-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #008060;
+            margin-top: 15px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-voltar {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-voltar:hover {
+            background: #d5d5d5;
+        }
+
+        .btn-salvar {
+            background: #0d3b66;
+            color: #fff;
+        }
+
+        .btn-salvar:hover {
+            background: #092c4e;
+        }
+
+        .btn-excluir {
+            background: #cc0000;
+            color: #fff;
+            margin-right: auto;
+        }
+
+        .btn-excluir:hover {
+            background: #a30000;
+        }
+
+        .btn-pagar {
+            background: #008060;
+            color: #fff;
+        }
+
+        .btn-pagar:hover {
+            background: #00664d;
+        }
+
+        .btn-copiar-pix {
+            background: #d1a153;
+            color: #fff;
+        }
+
+        .btn-copiar-pix:hover {
+            background: #b58941;
+        }
+
+        /* Ajustes Responsivos */
+        @media (max-width: 600px) {
+            .numeros-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            .num-btn {
+                padding: 8px 0;
+                font-size: 14px;
+            }
+            h1 { font-size: 22px; }
+            h2 { font-size: 18px; }
+        }
+
+        .Rodape-seguro {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e6f4ea;
+            color: #137333;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .Rodape-seguro::before {
+            content: "🔒";
+            margin-right: 6px;
+        }
+        
+            /* Estilo do novo cabeçalho no topo */
+                .top-brand-bar {
+            background: linear-gradient(135deg, #0d3b66, #1a5c96);
+            padding: 10px 20px;
+            border-bottom: 3px solid #E3D405;
+            border-radius: 0 0 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            /* Alterado para fixo no topo da tela */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .brand-img {
+            width: 100px;
+            height: 40px;
+            border-radius: 0 20px 0 20px;
+            border: none;
+            border: 2px solid #fff;
+            object-fit: cover;
+        }
+
+        .brand-name {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+            /* Estilo do menu hambúrguer */
+        .menu-container {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: #179632;
+            border-radius: 2px;
+        }
+
+                .menu-links {
+            display: none; /* Inicia escondido */
+            position: absolute;
+            right: 0;
+            top: 23px; /* Ajuste para ficar logo abaixo da barra fixa */
+            background: #081A59;
+            border-radius: 3px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            padding: 5px;
+            z-index: 9999;
+            width: 190px;
+            flex-direction: column;
+            align-items: center; /* Centraliza os botões */
+            gap: 10px;
+        }
+
+        .menu-links a {
+            text-decoration: none;
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Centraliza o botão dentro da âncora */
+        }
+
+        /* NOVO MODAL FLUTUANTE */
+        .modal-flutuante {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 9998;
+            border: 2px solid #0d3b66;
+            max-width: 250px;
+            animation: slideInUp 0.3s ease;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+    /* Container principal para centralizar o robô se necessário */
+    .robot-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: none;
+        background-color: #fff; /* Cor de fundo opcional para contraste */
+        border-radius: none;
+        width: fit-content;
+        margin: 20px auto; /* Centraliza na página */
+    }
+
+    /* Desenho da Cabeça do Robô */
+    .robot-face {
+        width: 30px;
+        height: 26px;
+        background: linear-gradient(145deg, #7e7e7e, #a1a1a1); /* Tom metálico */
+        border: 1px solid #444;
+        border-radius: 4px 4px 1px 1px; /* Cantos arredondados em cima */
+        position: relative;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* Antena (Opcional, mas dá charme) */
+    .robot-face::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 6px;
+        background-color: #444;
+        border-radius: 1px 1px 0 0;
+    }
+    .robot-face::after {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background-color: #ff4444; /* Ponta da antena vermelha */
+        border-radius: 50%;
+        border: 1px solid #444;
+    }
+
+    /* Área dos Olhos */
+    .eyes-container {
+        display: flex;
+        justify-content: space-around;
+        width: 80%;
+        margin: 7px auto 0 auto;
+    }
+
+    /* Desenho Base do Olho */
+    .eye {
+        width: 7px;
+        height: 7px;
+        background-color: #333; /* Fundo do olho quando fechado */
+        border-radius: 50%;
+        border: 1px solid #222;
+        position: relative;
+        overflow: hidden; /* Esconde o brilho quando o olho fecha */
+    }
+
+    /* A parte que brilha e muda de cor (a "pupila") */
+    .eye-glow {
+        width: 100%;
+        height: 100%;
+        background-color: limegreen; /* Cor inicial */
+        border-radius: 50%;
+        box-shadow: 0 0 3px limegreen; /* Brilho inicial */
+        
+        /* Aplicação da Animação */
+        animation: blinkAndColorChange 2s infinite linear;
+    }
+
+    /* Desenho da Boca */
+    .mouth {
+        width: 12px;
+        height: 2px;
+        background-color: #333;
+        border-radius: 1px;
+        margin: 4px auto 0 auto;
+    }
+
+    /* DEFINIÇÃO DA ANIMAÇÃO (Keyframes)
+       Esta animação controla o piscar (escala vertical)
+       e a mudança de cor (Verde -> Amarelo -> Vermelho).
+    */
+    @keyframes blinkAndColorChange {
+        /* 0% - 30%: VERDE (Aberto) */
+        0%, 28% {
+            transform: scaleY(1);
+            background-color: limegreen;
+            box-shadow: 0 0 3px limegreen;
+        }
+        /* 29%: Piscar rápido no Verde */
+        29% {
+            transform: scaleY(0.1);
+        }
+        
+        /* 30% - 60%: AMARELO (Aberto) */
+        30%, 58% {
+            transform: scaleY(1);
+            background-color: gold;
+            box-shadow: 0 0 3px gold;
+        }
+        /* 59%: Piscar rápido no Amarelo */
+        59% {
+            transform: scaleY(0.1);
+        }
+
+        /* 60% - 90%: VERMELHO (Aberto) */
+        60%, 88% {
+            transform: scaleY(1);
+            background-color: red;
+            box-shadow: 0 0 3px red;
+        }
+        /* 89%: Piscar rápido no Vermelho */
+        89% {
+            transform: scaleY(0.1);
+        }
+
+        /* 100%: Retorna ao Verde */
+        100% {
+            transform: scaleY(1);
+            background-color: limegreen;
+            box-shadow: 0 0 3px limegreen;
+        }
+    }
+    /*___________*/
+    
+    
+
+
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+             <div class="top-brand-bar">
+        <img src="logo.png" alt="Quark" class="brand-img">
+        <span class="brand-name" style="font-size: 20px;">
+            <span class="material-icons">sports_soccer</span>
+            PRÊMIO FÁCIL
+            <span class="material-icons">emoji_events</span><br>
+            
+        </span>
+        
+        <div class="menu-container">
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links" id="menuLinks">
+
+                <a href="Panel-Seguro-Admin.html"><button style="font-size: 15px; margin: 3px; background: none; color: #D4AF37;" class="btn-admin">
+                ADMIN<span class="material-icons">settings</span>
+                </button></a><hr style="border: none; height: 2px; background: linear-gradient(to right, transparent, #D4AF37, transparent);">
+
+                <a href="Como-sera.html"><button style="font-size: 15px; margin: 3px; background: none; color: #D4AF37;" class="btn-admin">
+                COMO SERÁ O SORTEIO <span class="material-icons">info</span>
+                </button></a><hr style="border: none; height: 2px; background: linear-gradient(to right, transparent, #D4AF37, transparent);">
+                
+                <a href="Cria-site.html"><button style=" font-size: 15px; margin: 3px; background: none; color: #D4AF37; display: flex; align-items: center; justify-content: center; width: 100%; border: none; cursor: pointer;" class="btn-admin">
+               CRIAR MEU SITE <i class="fas fa-search" style="margin-left: 10px;"></i>
+               </button></a><hr style="border: none; height: 2px; background: linear-gradient(to right, transparent, #D4AF37, transparent);">
+                
+                <a href="Realizar-Sorteio.html"><button style="font-size: 15px; margin: 3px; background: none; color: #D4AF37;" class="btn-admin">
+                REALIZAR SORTEIO  <span style="color: red font-size: 18;"><i class="fas fa-dice"></i></span>               
+                </button></a><hr style="border: none; height: 2px; background: linear-gradient(to right, transparent, #D4AF37, transparent);">
+                
+                <a href="Sobre.html"><button style="font-size: 15px; margin: 3px; background: none; color: #D4AF37;" class="btn-admin">
+                SOBRE <span class="material-icons">info</span>
+                </button></a><hr style="border: none; height: 2px; background: linear-gradient(to right, transparent, #D4AF37, transparent);">
+                
+                <a href="Ajuda.html"><button style="font-size: 15px; margin: 3px; background: none; color: #D4AF37;" class="btn-admin">
+                AJUDA <span class="material-icons">help</span>
+                </button></a>
+                
+            </div>
+        </div>
+    </div><p style="margin-top: 50px; font-size: 8px;">.</p>
+
+
+            
+            <h1 id="2">SORTEIO</h1>
+            
+            <img id="3" style="border-radius: 100%;" src="https://i.ibb.co/dsXbHQSH/83944.png" alt="Foto de Perfil" class="premio-img">
+            
+                <h2 id="4"><strong style="color: red; font-size: 15px;">
+                    SR. WILSON MARTINS PEREIRA
+                </strong>
+                </h2>
+            
+            <div id="5" class="subtitle">Após um diagnóstico de próstata, precisará fazer uma cirurgia.</div>
+        <section class="info-rifa">
+        <strong id="6" style="color: black;">META DA ARECADAÇÃO</strong><br>
+        <p id="7" style="color: red; font-size: 30px;">R$ 21,000,00</p><br>
+        <span id="8" style="color: black;">Valor Total da Cirurgia</span>
+        </section>
+        
+        </header>
+
+        <section class="premios-container">
+            <div class="premio-card">
+                <span class="badge">1º PRÊMIO</span>
+                <div id="9" class="premio-titulo">R$ 400,00 Reais no pix</div>
+                <img id="10" src="https://i.ibb.co/dsXbHQSH/83944.png" alt="R$ 400,00 no Pix " class="premio-img">
+                <p>imagem ilustrativa</p>
+            </div>
+
+            <div class="premio-card">
+                <span class="badge">2º PRÊMIO</span>
+                <div id="11" class="premio-titulo">R$ 100,00 Reais no Pix</div>
+                <img id="12" src="https://i.ibb.co/dsXbHQSH/83944.png" alt="R$ 100,00 no Pix" class="premio-img">
+                <p>imagem ilustrativa</p>
+            </div>
+        </section>
+
+        <section class="grid-container">
+            <div class="grid-title" id="txtGridTitulo">Selecione os seus números abaixo:</div><br>
+   
+
+            
+            <div class="numeros-grid" id="gridNumeros">
+            </div>
+        </section>
+
+        <section class="info-rifa">
+            <p id="13" class="valor-destaque">VALOR DO SORTEIO: R$ 20,00 <span style="font-size: 10px; font-weight: normal;">(por número)</span></p>          
+            <button class="btn-proximo" id="btnProximo">​
+            <p><strong style="color: Red;">DATA DO SORTEIO:</strong></p><br>
+                <p id="14">Quando todos os números forem preenchidos</p>
+            </button>
+     
+         </section>
+
+        <div class="acao-container">            
+            <p id="" style="color: #919191"> 
+               <steong style="font-size: 17px; color: #eb3a34">🤍 Mensagem de Agradecimento 🤍</steong>
+            </p><br>
+<p id="15" style="color: #919191">Gostaríamos de expressar a nossa mais profunda e sincera gratidão a 
+cada um de vocês que reservou um momento para comprar um número do 
+nosso sorteio e estender a mão ao SR. WILSON MARTINS PEREIRA neste momento tão delicado.            
+Quando sobemos da noticia, o nosso coração se echeu de preocupação, 
+mas ver a mobilização, a empatia e a generosidade de tantos amigos, familiares e 
+até mesmo de pessoas que nem o conheciam pessoalmente, nos devolveu a força e a 
+certeza de que ele não está sozinho nessa jornada delicada.</p>
+                <br>
+                <br>
+<p id="15" style="color: #919191">Cada contribuição de vocês foi muito além do valor financeiro; foi um abraço 
+caloroso, uma dose de esperança e um combustível essencial para que o 
+SR. WILSON MARTINS PEREIRA e sua família possam focam no que realmente importa agora: a sua 
+reabilitação e o seu pronto restabelecimento. Vocês provaram que a solidariedade 
+é uma força poderosa capaz de transformar a dor em união. Que toda essa bondade e 
+carinho que vocês plantaram retorne em dobro, com muita saúde, paz e bênçãos na vida de 
+cada um. Muito obrigado por fazerem a diferença e por caminharem conosco pelo bem do <span style="color: black;">SR. WILSON MARTINS PEREIRA</span>! 
+            </p>
+            
+   <a href="https://wa.me/5562995679219"><button style="
+    position: relative;
+    padding: 16px 40px;
+    margin: 20px;                                                  
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #25d366, #d0d9d1, #d3f5d6, #656665);
+    background-size: 400%;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+" 
+onmouseover="this.style.transform='scale(1.05)'" 
+onmouseout="this.style.transform='scale(1)'" 
+onmousedown="this.style.transform='scale(0.98)'" 
+onmouseup="this.style.transform='scale(1.05)'">
+   CRIAR MEU SITE
+</button></a>
+                        
+      <p class="Rodape-seguro" style="margin-bottom: 10px;">🔒 AMBIENTE 100% SEGURO</p>
+                      
+            <div class="admin-botoes-grupo">
+                <button class="btn-admin" id="btnAdmin" style="margin-bottom: 300px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Admin
+                </button>
+                <button class="btn-admin btn-backup" id="btnBackup" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Backup
+                </button>
+                <button class="btn-admin btn-backup" id="btnUpload" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    Upload
+                </button>
+                <input type="file" id="fileUploadInput" accept=".json" style="display: none;">
+            </div>
+        </div>
+    </div>
+    <div>
+    </div>
+
+    <!-- MODAL FLUTUANTE -->
+    <div class="modal-flutuante" id="modalFlutuante">
+        
+<div class="robot-container">
+    <div class="robot-face">
+        <div class="eyes-container">
+            <div class="eye">
+                <div class="eye-glow"></div>
+            </div>
+            <div class="eye">
+                <div class="eye-glow"></div>
+            </div>
+        </div>
+        <div class="mouth"></div>
+    </div>
+</div>
+          
+        <p style="text-align: center; font-size: 16px;">Numeros Escolidos</p>
+        
+           <div class="numeros-escolhidos" id="modalNumeros-2">--</div>
+           <div class="valor-total" id="modalTotal-2">Total: R$ 0,00</div>
+        
+        <p style="text-align: center; font-size: 14px;">Que bom que escolheu seu número.</p>
+        <p style="font-size: 13px; text-align: center;">Clique abaixo para o:</p>
+        <button class="btn-proximo" style="width: 100%; padding: 10px; font-size: 14px;" id="btnFlutuante">Próximo Passo</button>
+    </div>
+
+    <!-- Modal Cadastro / Admin -->
+       
+    <div class="modal-overlay" id="modalCadastro">
+        <div class="modal-content">                    
+            <div class="modal-title" id="modalCadastroTitulo">Dados do Comprador </div>
+            
+            <div><div class="bilhete-container" style="background-color: #fff9db; border-left: 5px solid #fab005; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif; max-width: 500px; margin: 20px auto; color: #2b2b2b;">
+    <p style="margin: 0; line-height: 1.5; font-size: 16px;">
+     
+    <div class="aviso-sorteio" style="background-color: #e8f5e9; border-left: 5px solid #2e7d32; padding: 15px; border-radius: 8px; font-family: sans-serif; max-width: 500px; margin: 20px auto; color: #1b5e20;">
+        <p>Número Escolido:
+        <strong><span id="numSelecionadoTitulo" style="color: red;">00</span><strong>
+        </p>
+    </div>
+            
+    </p>
+    <p style="text-align: center; margin: 10px 0 0 0; font-size: 20px;">
+    </p>
+                <div class="aviso-sorteio" style="background-color: #e8f5e9; border-left: 5px solid #2e7d32; padding: 15px; border-radius: 8px; font-family: sans-serif; max-width: 500px; margin: 20px auto; color: #1b5e20;">
+    <p style="margin: 0; line-height: 1.5; font-size: 16px; text-align: center;">
+        ⏳ O sorteio logo, logo começará...<br> Enquanto isso, nós lhe desejamos <strong>bastante sorte</strong>! 🍀
+    </p>
+    </div>
+
+            
+            <div class="modal-body">
+                <div class="form-group" id="grupoNumeroAdmin" style="display: none;">
+                    <label for="numeroAdminInput">Número do Sorteio:</label>
+                    <input type="number" id="numeroAdminInput" min="1" max="500" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="nomeCliente">Digite seu Nome:</label>
+                    <input type="text" id="nomeCliente" placeholder="Digite seu nome">
+                </div>
+                <div class="form-group">
+                    <label for="whatsappCliente">WhatsApp</label>
+                    <input type="text" id="whatsappCliente" placeholder="(00) 00000-0000">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-excluir" id="btnExcluirAdmin" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    Excluir
+                </button>
+                <button class="btn-modal btn-voltar" id="btnCancelarCadastro">Cancelar</button>
+                <button class="btn-modal btn-salvar" id="btnSalvarCadastro">
+                    <span id="txtIconeSalvar"></span> Confirmar Número<br>
+                </button>
+            </div>
+        </div>
+</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="robot-container" style="display: flex; justify-content: center; align-items: center; min-height: none; width: 100%;">
+    <div class="robot-face">
+        <div class="eyes-container">
+            <div class="eye">
+                <div class="eye-glow"></div>
+            </div>
+            <div class="eye">
+                <div class="eye-glow"></div>
+            </div>
+        </div>
+        <div class="mouth"></div>
+    </div>
+</div>
+
+            <div class="modal-title" style="text-align: center;">Confirmação de Reserva</div>
+            <div class="modal-body">
+                <p>Você selecionou os seguintes números:</p>
+                <div class="numeros-escolhidos" id="modalNumeros">--</div>
+                <div class="valor-total" id="modalTotal">Total: R$ 0,00</div>
+                
+                <div style="margin-top: 15px; font-size: 13px; color: #666;">
+                    <p style="text-align: center; color: red; font-size: 20px;"><strong>ATENÇÃO</strong></p>
+                    <p>Ao clicar no botão <span style="background-color: #008060; padding: 3px; border-radius: 3px; font-size: 10px; color: white;">Copia Pix</span>, o PIX do sorteio será copiado e você será direcionado ao WhatsApp com uma mensagem automática com os detalhes do sorteio.</p>
+                    <p>​⚠️ Importante: A mensagem no WhatsApp serve para registrarmos o seu pedido no nosso sistema. Não apague o texto automático antes de enviar!</p>
+              <div class="instrucoes-pix">
+    <h3 style="text-align: center; color: #0d3b66; font-size: 17px;">O que você precisa fazer agora?</h3>
+    <ol>
+        <li>Clicar no botão: <span style="background-color: #008060; padding: 3px; border-radius: 3px; font-size: 10px; color: white;">Copia Pix</span>.</li>
+        <li>Envie a mensagem automatica que foi gerada para nós no WhatsApp.</li>
+        <li>Abra o aplicativo do seu banco e efetue o pagamento utilizando a opção <strong>Pix Copia e Cola</strong>.</li>
+        <li>Enviar o <strong>comprovante de pagamento</strong> para nós no WhatsApp.</li>
+    </ol>
+              </div>
+
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-voltar" id="btnVoltar">Voltar</button>
+                <button class="btn-modal btn-pagar" id="btnPagar">Copiar PIX</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Criamos a variável onde o número do sorteio vai ficar guardado
+// Criamos a variável onde o número do sorteio vai ficar guardado
+window.quantidadeNumerosSorteio = 1000; // Valor padrão de segurança
+window.chavePixPlanilha = "0000000000"; // Chave PIX padrão de segurança caso a planilha falhe
+
+(function() {
+    const CONFIG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSBdaYxM5mhbbejiQkscqj46buinbkbLLwDXEqJn7mBc1D1kLD-5dST5Xvb9w4cTmuGE0t03fTzkFfe/pub?output=csv";
+
+    async function atualizarSite() {
+        try {
+            const resposta = await fetch(CONFIG_CSV_URL + "&t=" + new Date().getTime());
+            const textoBruto = await resposta.text();
+            const linhas = textoBruto.split(/\r?\n/);
+
+            linhas.forEach(linha => {
+                if (!linha.trim()) return;
+
+                // Detecta se o separador configurado no Sheets é ; ou ,
+                const sep = linha.includes(';') ? ';' : ',';
+
+                // Nova lógica robusta para CSV: divide respeitando aspas de strings/links
+                let colunas = [];
+                let dentroDeAspas = false;
+                let colunaAtual = "";
+
+                for (let i = 0; i < linha.length; i++) {
+                    const char = linha[i];
+
+                    if (char === '"') {
+                        dentroDeAspas = !dentroDeAspas; // Alterna o estado ao encontrar aspas
+                    } else if (char === sep && !dentroDeAspas) {
+                        colunas.push(colunaAtual.trim());
+                        colunaAtual = ""; // Próxima coluna
+                    } else {
+                        colunaAtual += char;
+                    }
+                }
+                colunas.push(colunaAtual.trim()); // Adiciona a última coluna
+
+                if (colunas.length >= 2) {
+                    // Remove aspas que sobram nas pontas do texto ou link
+                    const idElemento = colunas[0].replace(/^["']|["']$/g, '').trim();
+                    let conteudo = colunas[1].replace(/^["']|["']$/g, '').trim();
+
+                    if (!idElemento) return;
+
+                    // --- CONFIGURAÇÃO: QUANTIDADE DE NÚMEROS ---
+                    if (idElemento === "CONFIG_QUANTIDADE_NUMEROS") {
+                        window.quantidadeNumerosSorteio = parseInt(conteudo, 10) || 1000;
+                        console.log(`Sucesso: Quantidade de números definida para: ${window.quantidadeNumerosSorteio}`);
+                        
+                        if (typeof gerarGrid === 'function') {
+                            gerarGrid();
+                        }
+                        return; 
+                    }
+
+                    // --- CONFIGURAÇÃO: VALOR POR NÚMERO ---
+                    if (idElemento === "CONFIG_VALOR_NUMERO") {
+                        const valorLimpo = conteudo.replace(',', '.');
+                        valorPorNumero = parseFloat(valorLimpo) || 20.00;
+                        console.log(`Sucesso: Valor por número definido para: R$ ${valorPorNumero}`);
+                        return;
+                    }
+
+                    // --- CONFIGURAÇÃO: CHAVE PIX ---
+                    if (idElemento === "CONFIG_CHAVE_PIX") {
+                        window.chavePixPlanilha = conteudo;
+                        console.log(`Sucesso: Chave PIX definida para: ${window.chavePixPlanilha}`);
+                        return;
+                    }
+
+                    // --- ATUALIZAÇÃO DOS ELEMENTOS DO HTML ---
+                    const elemento = document.getElementById(idElemento);
+
+                    if (elemento) {
+                        const tag = elemento.tagName.toLowerCase();
+                        
+                        if (tag === 'img') {
+                            // Se o ID for uma imagem, muda a foto (link da planilha vai para o src)
+                            elemento.src = conteudo;
+                            console.log(`Sucesso: Imagem ${idElemento} atualizada com: ${conteudo}`);
+                        } else if (tag === 'a') {
+                            // Se o ID for um link, muda o destino do clique (link da planilha vai para o href)
+                            elemento.href = conteudo;
+                            console.log(`Sucesso: Link de destino ${idElemento} atualizado com: ${conteudo}`);
+                        } else {
+                            // Para qualquer outro elemento (p, span, div, h1), muda o texto de dentro
+                            elemento.textContent = conteudo;
+                            console.log(`Sucesso: Texto ${idElemento} atualizado com: ${conteudo}`);
+                        }
+                    } else {
+                        console.warn(`ID não encontrado no HTML: ${idElemento}`);
+                    }
+                }
+            });
+
+        } catch (e) {
+            console.error("Erro ao carregar planilha:", e);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', atualizarSite);
+    } else {
+        atualizarSite();
+    }
+})();
+
+
+       
+
+//🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺
+        
+        //Função do top
+                function toggleMenu() {
+            var menu = document.getElementById("menuLinks");
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+                }
+        
+        // Estrutura para armazenar os dados dos compradores por número
+        let reservas = JSON.parse(localStorage.getItem('rifa_reservas')) || {};
+        let dadosComprador = JSON.parse(localStorage.getItem('rifa_dados_comprador')) || null;
+        
+        // Estrutura do Painel Administrativo local
+        let reservasAdmin = JSON.parse(localStorage.getItem('rifa_reservas_admin')) || {};
+        let modoAdminAtivo = false;
+
+        window.valorPorNumero = 20.00;
+        let numeroSendoEditado = null;
+
+        let numerosVendidosPlanilha = [];
+
+        // LINKS DE PAGAMENTO
+        const LINKS_PAGAMENTO = {
+            "20.00": "32865511120", "40.00": "32865511120", "60.00": "32865511120", "80.00": "32865511120",
+            "100.00": "32865511120", "120.00": "32865511120", "140.00": "32865511120", "160.00": "32865511120",
+            "180.00": "32865511120", "200.00": "32865511120", "220.00": "32865511120", "240.00": "32865511120",
+            "260.00": "32865511120", "280.00": "32865511120", "300.00": "32865511120", "320.00": "32865511120",
+            "340.00": "32865511120", "360.00": "32865511120", "380.00": "32865511120", "400.00": "32865511120"
+        };
+
+        const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoBAhPS9a75KBxRp6EVhp1a9uIvUBBQOGQPjBaXXZpJlTGFPFiboJIt3C0gRkcdJBHtuqKByafvTHl/pub?output=csv";
+
+        // Elementos da interface
+        const gridNumeros = document.getElementById('gridNumeros');
+        const btnProximo = document.getElementById('btnProximo');
+        const btnAdmin = document.getElementById('btnAdmin');
+        const btnBackup = document.getElementById('btnBackup');
+        const btnUpload = document.getElementById('btnUpload');
+        const fileUploadInput = document.getElementById('fileUploadInput');
+        const txtGridTitulo = document.getElementById('txtGridTitulo');
+        
+        // Elementos Modais
+        const modalCadastro = document.getElementById('modalCadastro');
+        const modalCadastroTitulo = document.getElementById('modalCadastroTitulo');
+        const numSelecionadoTitulo = document.getElementById('numSelecionadoTitulo');
+        const grupoNumeroAdmin = document.getElementById('grupoNumeroAdmin');
+        const numeroAdminInput = document.getElementById('numeroAdminInput');
+        const nomeCliente = document.getElementById('nomeCliente');
+        const whatsappCliente = document.getElementById('whatsappCliente');
+        const btnCancelarCadastro = document.getElementById('btnCancelarCadastro');
+        const btnSalvarCadastro = document.getElementById('btnSalvarCadastro');
+        const btnExcluirAdmin = document.getElementById('btnExcluirAdmin');
+        const txtIconeSalvar = document.getElementById('txtIconeSalvar');
+        const modalConfirmacao = document.getElementById('modalConfirmacao');
+        const modalNumeros = document.getElementById('modalNumeros');
+        const modalTotal = document.getElementById('modalTotal');
+        const btnVoltar = document.getElementById('btnVoltar');
+        const btnPagar = document.getElementById('btnPagar');
+
+        // Modal Flutuante
+        const modalFlutuante = document.getElementById('modalFlutuante');
+        const btnFlutuante = document.getElementById('btnFlutuante');
+
+                function verificarExibicaoFlutuante() {
+            const numerosSelecionados = Object.keys(reservas).map(Number).sort((a, b) => a - b);
+            if (numerosSelecionados.length > 0) {
+                // Preenche os dados nos elementos do modal flutuante
+                document.getElementById('modalNumeros-2').innerText = numerosSelecionados.join(', ');
+                document.getElementById('modalTotal-2').innerText = `Total: R$ ${(numerosSelecionados.length * valorPorNumero).toFixed(2).replace('.', ',')}`;
+                modalFlutuante.style.display = 'block';
+            } else {
+                modalFlutuante.style.display = 'none';
+            }
+        }
+//🚫🚫🚫
+                // FUNÇÃO PARA COPIAR A CHAVE PIX
+        document.getElementById('btnPagar').addEventListener('click', function() {
+            const numerosSelecionados = Object.keys(reservas).map(Number).sort((a, b) => a - b);
+            const total = numerosSelecionados.length * valorPorNumero;
+            // Pega a chave PIX correspondente ao valor ou usa a padrão
+            // Procure por esta linha dentro da função do seu botão e mude para:
+            const chavePix = LINKS_PAGAMENTO[total.toFixed(2)] || window.chavePixPlanilha;
+        
+
+            // Copia para a área de transferência
+            navigator.clipboard.writeText(chavePix).then(() => {
+                alert("Chave PIX copiada com sucesso!");
+            }).catch(err => {
+                console.error("Erro ao copiar: ", err);
+                // Alternativa caso o navegador bloqueie o clipboard (ex: falta de HTTPS)
+                const inputProvisorio = document.createElement("input");
+                inputProvisorio.value = chavePix;
+                document.body.appendChild(inputProvisorio);
+                inputProvisorio.select();
+                document.execCommand("copy");
+                document.body.removeChild(inputProvisorio);
+                alert("Chave PIX copiada!");
+            });
+        });
+
+        
+
+        function carregarDadosDaPlanilha() {
+            fetch(SPREADSHEET_CSV_URL)
+            .then(response => response.text())
+            .then(data => {
+                let linhas = data.split('\n');
+                numerosVendidosPlanilha = [];
+                linhas.forEach((linha, index) => {
+                    let colunas = lineSplit(linha);
+                    if (colunas.length >= 1) {
+                        let conteudoColunaA = colunas[0].trim();
+                        let numeroRifaOcupado = index + 1;
+                        if (conteudoColunaA !== "") {
+                            numerosVendidosPlanilha.push(numeroRifaOcupado);
+                        }
+                    }
+                });
+                gerarGrid();
+            })
+            .catch(error => {
+                console.error("Erro ao ler dados da planilha:", error);
+                gerarGrid();
+            });
+        }
+
+        function lineSplit(text) {
+            let p = false, r = [''];
+            for (let i=0; i<text.length; i++) {
+                let c = text[i];
+                if (c === '"') { p = !p; }
+                else if (c === ',' && !p) { r.push(''); }
+                else { r[r.length-1] += c; }
+            }
+            return r;
+        }
+
+        function gerarGrid() {
+            gridNumeros.innerHTML = "";
+            for (let i = 1; i <= window.quantidadeNumerosSorteio; i++) {
+                const botao = document.createElement('button');
+                botao.classList.add('num-btn');
+                botao.innerText = i;
+                botao.id = `btn-num-${i}`;
+
+                const temDadosAdmin = reservasAdmin[i] && reservasAdmin[i].nome.trim() !== "" && reservasAdmin[i].whatsapp.trim() !== "";
+                
+                if (temDadosAdmin) botao.classList.add('tem-dados');
+
+                if (modoAdminAtivo) {
+                    if (reservas[i]) botao.classList.add('selecionado');
+                } else {
+                    if (temDadosAdmin || numerosVendidosPlanilha.includes(i)) {
+                        botao.classList.add('vendido');
+                        botao.disabled = true;
+                        gridNumeros.appendChild(botao);
+                        continue;
+                    }
+                    if (reservas[i]) botao.classList.add('selecionado');
+                }
+
+                botao.addEventListener('click', function() {
+                    numeroSendoEditado = i;
+                    if (modoAdminAtivo) {
+                        modalCadastroTitulo.innerHTML = `Admin — Configurar Número <span id="numSelecionadoTitulo">${i}</span>`;
+                        grupoNumeroAdmin.style.display = 'block';
+                        numeroAdminInput.value = i;
+                        txtIconeSalvar.innerHTML = ''; 
+                        btnExcluirAdmin.style.display = temDadosAdmin ? 'inline-flex' : 'none';
+                        if (reservasAdmin[i]) {
+                            nomeCliente.value = reservasAdmin[i].nome;
+                            whatsappCliente.value = reservasAdmin[i].whatsapp;
+                        } else {
+                            nomeCliente.value = '';
+                            whatsappCliente.value = '';
+                        }
+                        modalCadastro.style.display = 'flex';
+                    } else {
+                        if (reservas[i]) {
+                            delete reservas[i];
+                            localStorage.setItem('rifa_reservas', JSON.stringify(reservas));
+                            botao.classList.remove('selecionado');
+                            verificarExibicaoFlutuante();
+                        } else {
+                            modalCadastroTitulo.innerHTML = `​🚀 Sua Chance Chegou:`;
+                            grupoNumeroAdmin.style.display = 'none';
+                            btnExcluirAdmin.style.display = 'none';
+                            txtIconeSalvar.innerHTML = '';
+                            numSelecionadoTitulo.innerText = i;
+                            if (dadosComprador) {
+                                nomeCliente.value = dadosComprador.nome;
+                                whatsappCliente.value = dadosComprador.whatsapp;
+                            } else {
+                                nomeCliente.value = '';
+                                whatsappCliente.value = '';
+                            }
+                            modalCadastro.style.display = 'flex';
+                        }
+                    }
+                });
+                gridNumeros.appendChild(botao);
+            }
+            verificarExibicaoFlutuante();
+        }
+
+        btnAdmin.addEventListener('click', function() {
+            if (modoAdminAtivo) {
+                modoAdminAtivo = false;
+                document.body.classList.remove('admin-mode');
+                btnAdmin.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Admin`;
+                btnBackup.style.display = 'none';
+                btnUpload.style.display = 'none';
+                gerarGrid();
+            } else {
+                const senha = prompt("Digite a senha do administrador:");
+                if (senha === "Rif@D") {
+                    modoAdminAtivo = true;
+                    document.body.classList.add('admin-mode');
+                    btnAdmin.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Sair do Admin`;
+                    btnBackup.style.display = 'inline-flex';
+                    btnUpload.style.display = 'inline-flex';
+                    gerarGrid();
+                }
+            }
+        });
+
+        btnSalvarCadastro.addEventListener('click', function() {
+            const nome = nomeCliente.value.trim();
+            const whatsapp = whatsappCliente.value.trim();
+            if (!nome || !whatsapp) return;
+            if (modoAdminAtivo) {
+                const novoNumero = parseInt(numeroAdminInput.value);
+                reservasAdmin[novoNumero] = { nome: nome, whatsapp: whatsapp };
+                localStorage.setItem('rifa_reservas_admin', JSON.stringify(reservasAdmin));
+            } else {
+                dadosComprador = { nome: nome, whatsapp: whatsapp };
+                localStorage.setItem('rifa_dados_comprador', JSON.stringify(dadosComprador));
+                reservas[numeroSendoEditado] = { nome: nome, whatsapp: whatsapp };
+                localStorage.setItem('rifa_reservas', JSON.stringify(reservas));
+            }
+            modalCadastro.style.display = 'none';
+            gerarGrid();
+        });
+
+        function abrirModalConfirmacao() {
+            const numerosSelecionados = Object.keys(reservas).map(Number).sort((a, b) => a - b);
+            if (numerosSelecionados.length === 0) return;
+            modalNumeros.innerText = numerosSelecionados.join(', ');
+            modalTotal.innerText = `Total: R$ ${(numerosSelecionados.length * valorPorNumero).toFixed(2).replace('.', ',')}`;
+            modalConfirmacao.style.display = 'flex';
+        }
+
+        btnProximo.addEventListener('click', abrirModalConfirmacao);
+        btnFlutuante.addEventListener('click', abrirModalConfirmacao);
+
+        btnCancelarCadastro.addEventListener('click', () => modalCadastro.style.display = 'none');
+        btnVoltar.addEventListener('click', () => modalConfirmacao.style.display = 'none');
+        
+        btnPagar.addEventListener('click', function() {
+    const numerosSelecionados = Object.keys(reservas).map(Number).sort((a, b) => a - b);
+    const total = numerosSelecionados.length * valorPorNumero;
+    
+    // ABAIXO AS LINHAS QUE VOCÊ DEVE ADICIONAR:
+    const dadosSalvos = JSON.parse(localStorage.getItem('rifa_dados_comprador'));
+    const nomeComprador = dadosSalvos ? dadosSalvos.nome : "Não informado";
+    const whatsComprador = dadosSalvos ? dadosSalvos.whatsapp : "Não informado";
+    const linkPagamentoExato = LINKS_PAGAMENTO[total.toFixed(2)] || "32865511120";
+        
+    let textoWhatsapp = `Administração: Desde agora nós organizadores agradece a sua participação\n\n`;
+            textoWhatsapp += `👤 *Nome:* ${nomeComprador}\n`;
+            textoWhatsapp += `📱 *WhatsApp:* ${whatsComprador}\n\n`;
+            textoWhatsapp += `🔢 *Números Escolhidos:* ${numerosSelecionados.join(', ')}\n`;
+            textoWhatsapp += `💰 *Valor Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n`;
+            textoWhatsapp += `🔗 *Pix para Pagamento:* ${linkPagamentoExato}\n\n`;
+            textoWhatsapp += `*Nome do Pix:* WILSON MARTINS PEREIRA\n\n`;
+            textoWhatsapp += `🔻🔻🔻🔻🔻🔻🔻🔻🔻\n\n`;
+            textoWhatsapp += `Por favor, nos enviar o comprovante aqui mesmo para validar seus números!`;
+            textoWhatsapp += `Em caso de dúvidas o contato do beneficiário abaixo.\n\n`;
+            textoWhatsapp += `*Contato do Beneficiado:*\n\n`;
+            textoWhatsapp += `*WILSON MARTINS PEREIRA*\n\n`;
+            textoWhatsapp += `*CONTAT0:* 55 63 92364261\n\n`;
+            textoWhatsapp += `____________________________\n\n`;
+            textoWhatsapp += `*CLICA EM ENVIAR MENSAGEM AUTOMATICA*\n\n`;
+            textoWhatsapp += `👉👉👉👉👉👉\n\n`;
+
+        
+            window.open(`https://api.whatsapp.com/send?phone=556291740699&text=${encodeURIComponent(textoWhatsapp)}`, '_blank');
+            modalConfirmacao.style.display = 'none';
+        });
+
+        carregarDadosDaPlanilha();
+        setInterval(carregarDadosDaPlanilha, 30000);
+    </script>
+</body>
+</html>
+
+    
